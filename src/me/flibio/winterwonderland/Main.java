@@ -3,7 +3,9 @@ package me.flibio.winterwonderland;
 import org.slf4j.Logger;
 import org.spongepowered.api.GameRegistry;
 import org.spongepowered.api.block.BlockSnapshot;
+import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
+import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.property.block.PassableProperty;
 import org.spongepowered.api.effect.particle.ParticleEffect;
 import org.spongepowered.api.effect.particle.ParticleTypes;
@@ -19,6 +21,8 @@ import org.spongepowered.api.world.World;
 
 import com.google.inject.Inject;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -34,6 +38,8 @@ public class Main {
 	private SchedulerService scheduler;
 	
 	private CopyOnWriteArrayList<Location<World>> snowLocs = new CopyOnWriteArrayList<Location<World>>();
+
+	private ArrayList<BlockType> blockedTypes = new ArrayList<>(Arrays.asList(BlockTypes.WOODEN_SLAB,BlockTypes.STONE_SLAB,BlockTypes.STONE_SLAB2));
 	
 	private boolean enabled = false;
 	
@@ -53,11 +59,17 @@ public class Main {
 			Player player = event.getTargetEntity();
 			Location<World> loc = player.getLocation();
 			if(loc.getBlockType().equals(BlockTypes.AIR)&&!loc.add(0, -1, 0).getBlockType().equals(BlockTypes.AIR)) {
-				Optional<PassableProperty> solidOptional = loc.add(0, -1, 0).getProperty(PassableProperty.class);
-				if(solidOptional.isPresent()) {
-					if(!solidOptional.get().getValue()) {
+				Optional<PassableProperty> passableOptional = loc.add(0, -1, 0).getProperty(PassableProperty.class);
+				if(passableOptional.isPresent()) {
+					if(!passableOptional.get().getValue()) {
 						return;
 					}
+				}
+				if(blockedTypes.contains(loc.add(0, -1, 0).getBlockType())||blockedTypes.contains(loc.getBlockType())) {
+					return;
+				}
+				if(loc.add(0, -1, 0).get(Keys.STAIR_SHAPE).isPresent()||loc.get(Keys.STAIR_SHAPE).isPresent()) {
+					return;
 				}
 				loc.setBlockType(BlockTypes.SNOW_LAYER);
 				Location<World> rounded = new Location<World>(loc.getExtent(),loc.getBlockX(),loc.getBlockY(),loc.getBlockZ());
