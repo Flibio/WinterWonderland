@@ -15,7 +15,7 @@ import org.spongepowered.api.event.entity.DisplaceEntityEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.item.inventory.DropItemEvent;
 import org.spongepowered.api.plugin.Plugin;
-import org.spongepowered.api.service.scheduler.SchedulerService;
+import org.spongepowered.api.scheduler.Scheduler;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
@@ -28,14 +28,14 @@ import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
-@Plugin(id = "WinterWonderland", name = "Winter Wonderland", version = "1.0.0")
+@Plugin(id = "WinterWonderland", name = "Winter Wonderland", version = "1.0.2")
 public class Main {
 	
 	@Inject
 	Logger logger;
 	
 	private GameRegistry registery;
-	private SchedulerService scheduler;
+	private Scheduler scheduler;
 	
 	private CopyOnWriteArrayList<Location<World>> snowLocs = new CopyOnWriteArrayList<Location<World>>();
 
@@ -87,7 +87,7 @@ public class Main {
 	}
 	
 	@Listener
-	public void onItemDrop(DropItemEvent.Destruct event) {
+	public void onItemDrop(DropItemEvent.Pre event) {
 		if(enabled) {
 			Optional<BlockSnapshot> blockOptional = event.getCause().first(BlockSnapshot.class);
 			if(blockOptional.isPresent()) {
