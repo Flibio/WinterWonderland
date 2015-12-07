@@ -7,6 +7,7 @@ import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.property.block.PassableProperty;
+import org.spongepowered.api.data.property.block.SolidCubeProperty;
 import org.spongepowered.api.effect.particle.ParticleEffect;
 import org.spongepowered.api.effect.particle.ParticleTypes;
 import org.spongepowered.api.entity.living.player.Player;
@@ -28,7 +29,7 @@ import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
-@Plugin(id = "WinterWonderland", name = "Winter Wonderland", version = "1.0.2")
+@Plugin(id = "WinterWonderland", name = "Winter Wonderland", version = "1.0.3")
 public class Main {
 	
 	@Inject
@@ -59,7 +60,13 @@ public class Main {
 			Player player = event.getTargetEntity();
 			Location<World> loc = player.getLocation();
 			if(loc.getBlockType().equals(BlockTypes.AIR)&&!loc.add(0, -1, 0).getBlockType().equals(BlockTypes.AIR)) {
-				Optional<PassableProperty> passableOptional = loc.add(0, -1, 0).getProperty(PassableProperty.class);
+				Optional<PassableProperty> passableOptional = loc.add(0, 0, 0).getProperty(PassableProperty.class);
+				Optional<SolidCubeProperty> solidOptional = loc.add(0, -1, 0).getProperty(SolidCubeProperty.class);
+				if(solidOptional.isPresent()) {
+					if(!solidOptional.get().getValue()) {
+						return;
+					}
+				}
 				if(passableOptional.isPresent()) {
 					if(!passableOptional.get().getValue()) {
 						return;
