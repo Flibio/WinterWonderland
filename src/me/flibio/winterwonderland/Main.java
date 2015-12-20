@@ -1,6 +1,7 @@
 package me.flibio.winterwonderland;
 
 import org.slf4j.Logger;
+import org.spongepowered.api.Game;
 import org.spongepowered.api.GameRegistry;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockType;
@@ -29,25 +30,29 @@ import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
-@Plugin(id = "WinterWonderland", name = "Winter Wonderland", version = "1.0.3")
+@Plugin(id = "WinterWonderland", name = "Winter Wonderland", version = "1.0.4")
 public class Main {
 	
 	@Inject
 	Logger logger;
+	
+	@Inject
+	Game game;
 	
 	private GameRegistry registery;
 	private Scheduler scheduler;
 	
 	private CopyOnWriteArrayList<Location<World>> snowLocs = new CopyOnWriteArrayList<Location<World>>();
 
-	private ArrayList<BlockType> blockedTypes = new ArrayList<>(Arrays.asList(BlockTypes.WOODEN_SLAB,BlockTypes.STONE_SLAB,BlockTypes.STONE_SLAB2));
+	private ArrayList<BlockType> blockedTypes = new ArrayList<>(Arrays.asList(BlockTypes.WOODEN_SLAB,BlockTypes.STONE_SLAB,BlockTypes.STONE_SLAB2,
+			BlockTypes.STANDING_SIGN,BlockTypes.WALL_SIGN));
 	
 	private boolean enabled = false;
 	
 	@Listener
 	public void onServerStart(GameStartedServerEvent event) {
-		registery = event.getGame().getRegistry();
-		scheduler = event.getGame().getScheduler();
+		registery = game.getRegistry();
+		scheduler = game.getScheduler();
 
 		scheduler.createTaskBuilder().execute(r -> {
 			enabled = isEnabled();
