@@ -24,11 +24,15 @@ You can find the download link directly below!
 ###What are all of the configuration options and commands?
 
 **Commands:**
+
 &nbsp; `/winter` - Disables snow placement for the player who ran the command
+
 &nbsp;&nbsp;&nbsp; Permission: `winter.toggle`
 
 **Configuration:**
+
 &nbsp; File Location: `config/WinterWonderland/config.conf`
+
 &nbsp; Set `ignore-date` to `enabled` if you want Winter Wonderland to be always enabled.
 
 ---
