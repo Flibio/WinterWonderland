@@ -44,7 +44,7 @@ public class Main {
     @Inject Game game;
 
     private GameRegistry registery;
-    private FileManager fileManager;
+    protected FileManager fileManager;
     private Scheduler scheduler;
     protected ConfigurationNode playerData;
 
@@ -54,6 +54,7 @@ public class Main {
             BlockTypes.STANDING_SIGN, BlockTypes.WALL_SIGN));
 
     private boolean enabled = false;
+    private boolean defaultTrailValue;
 
     @Listener
     public void onServerStart(GameInitializationEvent event) {
@@ -70,11 +71,13 @@ public class Main {
         fileManager.loadFile(FileType.DATA);
         fileManager.loadFile(FileType.CONFIGURATION);
         fileManager.testDefault("ignore-date", "disabled");
+        fileManager.testDefault("default-trail-value", "enabled");
 
         fileManager.loadFile(FileType.CONFIGURATION);
         if (fileManager.getConfigValue("ignore-date").equalsIgnoreCase("enabled")) {
             enabled = true;
         }
+        defaultTrailValue = fileManager.getConfigValue("default-trail-value").equalsIgnoreCase("enabled");
 
         CommandSpec toggleCommand = CommandSpec.builder()
                 .description(Text.of("Toggle snow placement"))
@@ -99,11 +102,11 @@ public class Main {
     }
 
     @Listener
-    public void onPlayerJoin(ClientConnectionEvent.Join event) {
-        Player player = event.getTargetEntity();
-        String uuid = player.getUniqueId().toString();
-        if (playerData.getNode(uuid) == null) {
-            playerData.getNode(uuid).setValue(true);
+    public void onPlayerJoin(ClientConnectionEvent.Auth event) {
+        String uuid = event.getProfile().getUniqueId().toString();
+        if (playerData.getNode(uuid).isVirtual()) {
+            playerData.getNode(uuid).setValue(defaultTrailValue);
+            fileManager.saveFile(FileType.DATA, playerData);
         }
     }
 
@@ -112,7 +115,7 @@ public class Main {
         if (enabled) {
             Player player = event.getTargetEntity();
             String uuid = player.getUniqueId().toString();
-            if (playerData.getNode(uuid) != null && playerData.getNode(uuid).getBoolean()) {
+            if (!playerData.getNode(uuid).isVirtual() && playerData.getNode(uuid).getBoolean()) {
                 Location<World> loc = player.getLocation();
                 if (loc.getBlockType().equals(BlockTypes.AIR) && !loc.add(0, -1, 0).getBlockType().equals(BlockTypes.AIR)) {
                     Optional<PassableProperty> passableOptional = loc.add(0, 0, 0).getProperty(PassableProperty.class);

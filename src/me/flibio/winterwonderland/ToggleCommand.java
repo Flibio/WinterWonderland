@@ -1,5 +1,6 @@
 package me.flibio.winterwonderland;
 
+import me.flibio.winterwonderland.FileManager.FileType;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -30,6 +31,7 @@ public class ToggleCommand implements CommandExecutor {
         } else {
             boolean value = Main.access.playerData.getNode(uuid).getBoolean();
             Main.access.playerData.getNode(uuid).setValue(!value);
+            Main.access.fileManager.saveFile(FileType.DATA, Main.access.playerData);
             if (value) {
                 player.sendMessage(prefix.toBuilder().append(Text.of(TextColors.RED, "Turned off ", TextColors.WHITE, "snow placement!")).build());
             } else {

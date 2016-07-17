@@ -1,12 +1,11 @@
 package me.flibio.winterwonderland;
 
+import com.typesafe.config.ConfigException;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
-
 import org.slf4j.Logger;
-
-import com.typesafe.config.ConfigException;
+import org.spongepowered.api.Sponge;
 
 import java.io.File;
 import java.io.IOException;
@@ -140,24 +139,26 @@ public class FileManager {
     }
 
     public void saveFile(FileType file, ConfigurationNode root) {
-        String fileName = "";
-        switch (file) {
-            case CONFIGURATION:
-                fileName = "config.conf";
-                break;
+        Sponge.getScheduler().createTaskBuilder().execute(c -> {
+            String fileName = "";
+            switch (file) {
+                case CONFIGURATION:
+                    fileName = "config.conf";
+                    break;
 
-            case DATA:
-                fileName = "data.conf";
-                break;
-        }
-        ConfigurationLoader<?> manager = HoconConfigurationLoader.builder().setFile(new File("config/WinterWonderland/" + fileName)).build();
+                case DATA:
+                    fileName = "data.conf";
+                    break;
+            }
+            ConfigurationLoader<?> manager = HoconConfigurationLoader.builder().setFile(new File("config/WinterWonderland/" + fileName)).build();
 
-        try {
-            manager.save(root);
-        } catch (IOException e) {
-            logger.error("Error saving " + fileName + "!");
-            logger.error(e.getMessage());
-        }
+            try {
+                manager.save(root);
+            } catch (IOException e) {
+                logger.error("Error saving " + fileName + "!");
+                logger.error(e.getMessage());
+            }
+        }).async().submit(Main.access);
     }
 
 }

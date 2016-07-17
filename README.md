@@ -8,7 +8,7 @@ Winter Wonderland will do exactly **two** things to your server:
 
 1. Spawn snow particles below a player's feet when walking
 2. Wherever a player walks, they will leave a snow trail behind
-  - The snow is temporary disappears after 2.5 seconds
+  - The snow is temporary, and disappears after 2.5 seconds
   - The snow is special, and will not drop snowballs when it is broken
 
 Suggestions are apprectiated, so feel free reply with any ideas you have for this plugin!
@@ -34,6 +34,8 @@ You can find the download link directly below!
 &nbsp; File Location: `config/WinterWonderland/config.conf`
 
 &nbsp; Set `ignore-date` to `enabled` if you want Winter Wonderland to be always enabled.
+
+&nbsp; Set `default-trail-value` to `enabled` if you want trails to be enabled by default, or `disabled` if you want trails to be disabled by default.
 
 ---
 
