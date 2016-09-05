@@ -34,7 +34,7 @@ import java.util.Calendar;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-@Plugin(id = "winterwonderland", name = "Winter Wonderland", version = "1.1.1")
+@Plugin(id = "winterwonderland", name = "Winter Wonderland", version = "1.2.1")
 public class Main {
 
     public static Main access;
