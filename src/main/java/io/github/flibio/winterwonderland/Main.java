@@ -25,9 +25,8 @@
 
 package io.github.flibio.winterwonderland;
 
-import io.github.flibio.winterwonderland.FileManager.FileType;
-
 import com.google.inject.Inject;
+import io.github.flibio.winterwonderland.FileManager.FileType;
 import ninja.leaping.configurate.ConfigurationNode;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
@@ -43,7 +42,9 @@ import org.spongepowered.api.effect.particle.ParticleEffect;
 import org.spongepowered.api.effect.particle.ParticleTypes;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.entity.DisplaceEntityEvent;
+import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.cause.NamedCause;
+import org.spongepowered.api.event.entity.MoveEntityEvent;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
 import org.spongepowered.api.event.item.inventory.DropItemEvent;
@@ -137,9 +138,12 @@ public class Main {
     }
 
     @Listener
-    public void onPlayerMove(DisplaceEntityEvent.Move.TargetPlayer event) {
+    public void onPlayerMove(MoveEntityEvent event) {
         if (enabled) {
-            Player player = event.getTargetEntity();
+            if (!(event.getTargetEntity() instanceof Player)) {
+                return;
+            }
+            Player player = (Player) event.getTargetEntity();
             String uuid = player.getUniqueId().toString();
             if (!playerData.getNode(uuid).isVirtual() && playerData.getNode(uuid).getBoolean()) {
                 Location<World> loc = player.getLocation();
@@ -162,7 +166,7 @@ public class Main {
                     if (loc.add(0, -1, 0).get(Keys.STAIR_SHAPE).isPresent() || loc.get(Keys.STAIR_SHAPE).isPresent()) {
                         return;
                     }
-                    loc.setBlockType(BlockTypes.SNOW_LAYER);
+                    loc.setBlockType(BlockTypes.SNOW_LAYER, Cause.of(NamedCause.owner(this)));
                     Location<World> rounded = new Location<World>(loc.getExtent(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
                     snowLocs.add(rounded);
                     ParticleEffect effect = registery.createBuilder(ParticleEffect.Builder.class).type(ParticleTypes.SNOWBALL).count(50).build();
@@ -170,7 +174,7 @@ public class Main {
                     scheduler.createTaskBuilder().execute(r -> {
                         snowLocs.remove(loc);
                         if (loc.getBlockType().equals(BlockTypes.SNOW_LAYER)) {
-                            loc.setBlockType(BlockTypes.AIR);
+                            loc.setBlockType(BlockTypes.AIR, Cause.of(NamedCause.owner(this)));
                         }
                     }).delayTicks(50).submit(this);
                 }
