@@ -1,0 +1,43 @@
+plugins {
+    id 'java'
+    id 'net.minecrell.licenser' version '0.1.5'
+}
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+group 'io.github.flibio'
+
+defaultTasks 'licenseFormat', 'build'
+
+repositories {
+    mavenCentral()
+    jcenter()
+    maven {
+        name 'Sponge API repo'
+        url 'http://repo.spongepowered.org/maven'
+    }
+}
+
+dependencies {
+    compile "org.spongepowered:spongeapi:${apiVersion}"
+}
+
+jar {
+    archiveName = "WinterWonderland-${apiVersion.minus("-SNAPSHOT")}-${version}.jar"
+}
+
+license {
+    ext.name = project.name
+    ext.owner = project.owner
+    ext.inceptionYear = project.inceptionYear
+    ext.currentYear = project.currentYear
+
+    header file('HEADER.txt')
+
+    sourceSets = project.sourceSets
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.14'
+}
