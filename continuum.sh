@@ -8,7 +8,7 @@
 # The Continuum URL to target. Must include a trailing slash. #
 TARGET="http://continuum.flibio.net/api/"
 # The Continuum project to target. Must be lowercase and have - instead of a space. #
-PROJECT="winter-wonderland"
+PROJECT="WinterWonderland"
 # The GitHub branch to target. #
 BRANCH="develop"
 # The files to upload. Supports wildcard *. #
