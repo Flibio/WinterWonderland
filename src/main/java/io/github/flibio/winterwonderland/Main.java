@@ -50,6 +50,7 @@ import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
 import org.spongepowered.api.event.item.inventory.DropItemEvent;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.plugin.Plugin;
+import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.scheduler.Scheduler;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.Location;
@@ -69,6 +70,8 @@ public class Main {
     @Inject Logger logger;
 
     @Inject Game game;
+
+    @Inject PluginContainer pluginContainer;
 
     private GameRegistry registery;
     protected FileManager fileManager;
@@ -166,15 +169,15 @@ public class Main {
                     if (loc.add(0, -1, 0).get(Keys.STAIR_SHAPE).isPresent() || loc.get(Keys.STAIR_SHAPE).isPresent()) {
                         return;
                     }
-                    loc.setBlockType(BlockTypes.SNOW_LAYER, Cause.of(NamedCause.owner(this)));
+                    loc.setBlockType(BlockTypes.SNOW_LAYER, Cause.of(NamedCause.of("WinterWonderland", pluginContainer)));
                     Location<World> rounded = new Location<World>(loc.getExtent(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
                     snowLocs.add(rounded);
-                    ParticleEffect effect = registery.createBuilder(ParticleEffect.Builder.class).type(ParticleTypes.SNOWBALL).count(50).build();
+                    ParticleEffect effect = registery.createBuilder(ParticleEffect.Builder.class).type(ParticleTypes.SNOWBALL).quantity(50).build();
                     player.spawnParticles(effect, loc.getPosition(), 32);
                     scheduler.createTaskBuilder().execute(r -> {
                         snowLocs.remove(loc);
                         if (loc.getBlockType().equals(BlockTypes.SNOW_LAYER)) {
-                            loc.setBlockType(BlockTypes.AIR, Cause.of(NamedCause.owner(this)));
+                            loc.setBlockType(BlockTypes.AIR, Cause.of(NamedCause.of("WinterWonderland", pluginContainer)));
                         }
                     }).delayTicks(50).submit(this);
                 }
