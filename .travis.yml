@@ -5,7 +5,7 @@ notifications:
   email: false
 install:
 - 'chmod +x ./gradlew'
-script: gradle build --stacktrace --info
+script: ./gradlew build --stacktrace --info
 after_success:
 - 'chmod +x ./continuum.sh'
 - './continuum.sh'
