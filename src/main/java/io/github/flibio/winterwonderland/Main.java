@@ -30,7 +30,6 @@ import io.github.flibio.winterwonderland.FileManager.FileType;
 import ninja.leaping.configurate.ConfigurationNode;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
-import org.spongepowered.api.GameRegistry;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
@@ -50,6 +49,7 @@ import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
 import org.spongepowered.api.event.item.inventory.DropItemEvent;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.plugin.Plugin;
+import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.scheduler.Scheduler;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.Location;
@@ -70,7 +70,8 @@ public class Main {
 
     @Inject Game game;
 
-    private GameRegistry registery;
+    @Inject PluginContainer pluginContainer;
+
     protected FileManager fileManager;
     private Scheduler scheduler;
     protected ConfigurationNode playerData;
@@ -85,7 +86,6 @@ public class Main {
 
     @Listener
     public void onServerStart(GameInitializationEvent event) {
-        registery = game.getRegistry();
         scheduler = game.getScheduler();
         fileManager = new FileManager(logger);
 
@@ -166,15 +166,15 @@ public class Main {
                     if (loc.add(0, -1, 0).get(Keys.STAIR_SHAPE).isPresent() || loc.get(Keys.STAIR_SHAPE).isPresent()) {
                         return;
                     }
-                    loc.setBlockType(BlockTypes.SNOW_LAYER, Cause.of(NamedCause.owner(this)));
+                    loc.setBlockType(BlockTypes.SNOW_LAYER, Cause.of(NamedCause.owner(pluginContainer)));
                     Location<World> rounded = new Location<World>(loc.getExtent(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
                     snowLocs.add(rounded);
-                    ParticleEffect effect = registery.createBuilder(ParticleEffect.Builder.class).type(ParticleTypes.SNOWBALL).count(50).build();
+                    ParticleEffect effect = ParticleEffect.builder().type(ParticleTypes.SNOWBALL).quantity(50).build();
                     player.spawnParticles(effect, loc.getPosition(), 32);
                     scheduler.createTaskBuilder().execute(r -> {
                         snowLocs.remove(loc);
                         if (loc.getBlockType().equals(BlockTypes.SNOW_LAYER)) {
-                            loc.setBlockType(BlockTypes.AIR, Cause.of(NamedCause.owner(this)));
+                            loc.setBlockType(BlockTypes.AIR, Cause.of(NamedCause.owner(pluginContainer)));
                         }
                     }).delayTicks(50).submit(this);
                 }
