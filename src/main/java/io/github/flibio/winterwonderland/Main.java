@@ -30,7 +30,6 @@ import io.github.flibio.winterwonderland.FileManager.FileType;
 import ninja.leaping.configurate.ConfigurationNode;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
-import org.spongepowered.api.GameRegistry;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
@@ -62,7 +61,7 @@ import java.util.Calendar;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-@Plugin(id = "winterwonderland", name = "Winter Wonderland", version = "1.2.2")
+@Plugin(id = "winterwonderland", name = "Winter Wonderland", version = "1.3.0")
 public class Main {
 
     public static Main access;
@@ -74,6 +73,7 @@ public class Main {
     @Inject PluginContainer pluginContainer;
 
     private GameRegistry registery;
+
     protected FileManager fileManager;
     private Scheduler scheduler;
     protected ConfigurationNode playerData;
@@ -85,10 +85,10 @@ public class Main {
 
     private boolean enabled = false;
     private boolean defaultTrailValue;
+    private int snowDelay = 50;
 
     @Listener
     public void onServerStart(GameInitializationEvent event) {
-        registery = game.getRegistry();
         scheduler = game.getScheduler();
         fileManager = new FileManager(logger);
 
@@ -102,10 +102,17 @@ public class Main {
         fileManager.loadFile(FileType.CONFIGURATION);
         fileManager.testDefault("ignore-date", "disabled");
         fileManager.testDefault("default-trail-value", "enabled");
+        fileManager.testDefault("snow-delay-ticks", "50");
 
         fileManager.loadFile(FileType.CONFIGURATION);
         if (fileManager.getConfigValue("ignore-date").equalsIgnoreCase("enabled")) {
             enabled = true;
+        }
+        String sInt = fileManager.getConfigValue("snow-delay-ticks");
+        try {
+            snowDelay = Integer.parseInt(sInt);
+        } catch (Exception e) {
+            logger.error("Failed to parse snow delay! Using default 50 ticks.");
         }
         defaultTrailValue = fileManager.getConfigValue("default-trail-value").equalsIgnoreCase("enabled");
 
@@ -179,7 +186,7 @@ public class Main {
                         if (loc.getBlockType().equals(BlockTypes.SNOW_LAYER)) {
                             loc.setBlockType(BlockTypes.AIR, Cause.of(NamedCause.of("WinterWonderland", pluginContainer)));
                         }
-                    }).delayTicks(50).submit(this);
+                    }).delayTicks(snowDelay).submit(this);
                 }
             }
         }
