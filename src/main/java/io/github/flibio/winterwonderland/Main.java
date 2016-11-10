@@ -30,6 +30,7 @@ import io.github.flibio.winterwonderland.FileManager.FileType;
 import ninja.leaping.configurate.ConfigurationNode;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
+import org.spongepowered.api.GameRegistry;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
