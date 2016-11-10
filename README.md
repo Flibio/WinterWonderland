@@ -37,6 +37,8 @@ You can find the download link directly below!
 
 &nbsp; Set `default-trail-value` to `enabled` if you want trails to be enabled by default, or `disabled` if you want trails to be disabled by default.
 
+&nbsp; Modify the value `snow-delay-ticks` to set the delay in ticks for how long trail snow takes to disappear.
+
 ---
 
 :inbox_tray: [**Download Winter Wonderland**][1]
